@@ -1,62 +1,22 @@
 var Newton = Newton || {};
 
-(function(namespace) {
+$ = function(elementType, attributesOrProps, ...children){
+  if (typeof elementType === 'function'){
 
-  var self = namespace.Element = function(type, attributes, children){
-    this.element = document.createElement(type);
-    this._attachAttributes(attributes);
-    this.children = children || [];
-  };
+    var instance = new elementType(attributesOrProps);
+    var node = instance.render();
 
-  self.prototype = {
-    render: function(){
-      this._attachChildren();
+    node.setMainComponent(instance);
 
-      return this.element;
-    },
-
-    setChildren: function(children){
-      for(var i=0; i<children.length; i++) this.children.push(children[i]);
-    },
-
-    _attachAttributes: function(attributes){
-      for (var prop in attributes){
-        if (attributes.hasOwnProperty(prop)) {;
-          this.element[prop] = attributes[prop];
-        }
-      }
-    },
-
-    _attachChildren: function(){
-      for(var i = 0; i < this.children.length; i++){
-
-        if(typeof this.children[i] === 'string'){
-          this.element.innerHTML += this.children[i];
-        }
-        else{
-          childNode = this.children[i].render();
-          this.element.appendChild(childNode.cloneNode(true));
-      }
-
-      }
-    }
-  };
-
-})(Newton);
-
-
-
-$ = function(elementType, attributes, ...children){
- return new Newton.Element(elementType, attributes, children);
+    return node;
+  }
+  else{
+    var element = new Newton.Element(elementType, attributesOrProps, children);
+    return element;
+  }
+  
 };
 
-
-var foo = $('div', {className: 'foo'});
-var baz = $('span', {className: 'baz'});
-var bar = $('div', {className: 'bar'}, foo, $('p', null, 'Hello'));
-foo.setChildren([baz]);
-
-console.log(bar.render());
 
 
 
